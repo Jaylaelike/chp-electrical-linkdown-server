@@ -17,7 +17,7 @@ const connection = mysql.createConnection({
 // 		dialectOptions: {
 // 			timezone: "local",
 // 		}
-  dateStrings: "true",
+//   dateStrings: "true",
   ssl: {
     rejectUnauthorized: true,
   }
