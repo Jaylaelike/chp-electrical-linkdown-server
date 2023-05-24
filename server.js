@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
   user: USER_SQL,
   password: PASSWORD_SQL,
   database: DATABASE_SQL,
-  timezone: "utc",
+//   timezone: "utc",
 //   timezone: "Asia/Bangkok",
 // 		dialectOptions: {
 // 			timezone: "local",
