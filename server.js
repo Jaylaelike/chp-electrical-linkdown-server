@@ -12,12 +12,11 @@ const connection = mysql.createConnection({
   user: USER_SQL,
   password: PASSWORD_SQL,
   database: DATABASE_SQL,
-  port: PORT,
   timezone: "utc",
   dateStrings: "true",
-  // ssl: {
-  //   rejectUnauthorized: true,
-  // }
+  ssl: {
+    rejectUnauthorized: true,
+  }
 });
 
 var app = express();
