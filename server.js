@@ -12,11 +12,12 @@ const connection = mysql.createConnection({
   user: USER_SQL,
   password: PASSWORD_SQL,
   database: DATABASE_SQL,
+  port: PORT,
   timezone: "utc",
   dateStrings: "true",
-  ssl: {
-    rejectUnauthorized: true,
-  }
+  // ssl: {
+  //   rejectUnauthorized: true,
+  // }
 });
 
 var app = express();
@@ -301,6 +302,38 @@ app.delete("/api/nt/delete", function (req, res, next) {
     }
   );
 });
+
+
+//Query by date range for electrics filter Datetime function
+app.get("/api/electrics/:start/:end", function (req, res, next) {
+  const start = req.params.start;
+  const end = req.params.end;
+  connection.query(
+    "SELECT * FROM `electric` WHERE `enddate` BETWEEN ? AND ?",
+    [start,end],
+    function (err, results, fields) {
+      res.json(results);
+      console.log(results); // results contains rows returned by server
+      console.log(fields); // fields contains extra meta data about results, if available
+    }
+  );
+});
+
+//Query by date range for LinkDown filter Datetime function
+app.get("/api/nt/:start/:end", function (req, res, next) {
+  const start = req.params.start;
+  const end = req.params.end;
+  connection.query(
+    "SELECT * FROM `nt_down` WHERE `enddate` BETWEEN ? AND ?",
+    [start,end],
+    function (err, results, fields) {
+      res.json(results);
+      console.log(results); // results contains rows returned by server
+      console.log(fields); // fields contains extra meta data about results, if available
+    }
+  );
+});
+
 
 app.listen(4000, () => {
  console.log(`Example app listening on port 4000`);
