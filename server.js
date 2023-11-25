@@ -15,9 +15,9 @@ const connection = mysql.createConnection({
   port: PORT,
   // timezone: "utc",
   // dateStrings: "true",
-  // ssl: {
-  //   rejectUnauthorized: true,
-  // }
+  ssl: {
+    rejectUnauthorized: true,
+  }
 });
 
 var app = express();
