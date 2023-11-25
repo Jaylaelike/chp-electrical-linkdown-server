@@ -1,10 +1,10 @@
 var express = require("express");
 var cors = require("cors");
 const mysql = require("mysql2");
-const moment = require('moment');
-require('dotenv').config();
+const moment = require("moment");
+require("dotenv").config();
 
-const {HOST_SQL , USER_SQL, PASSWORD_SQL, DATABASE_SQL, PORT} = process.env;
+const { HOST_SQL, USER_SQL, PASSWORD_SQL, DATABASE_SQL, PORT } = process.env;
 
 ///Connection Config
 const connection = mysql.createConnection({
@@ -12,11 +12,12 @@ const connection = mysql.createConnection({
   user: USER_SQL,
   password: PASSWORD_SQL,
   database: DATABASE_SQL,
+  port: PORT,
   timezone: "utc",
   dateStrings: "true",
-  ssl: {
-    rejectUnauthorized: true,
-  }
+  // ssl: {
+  //   rejectUnauthorized: true,
+  // }
 });
 
 var app = express();
@@ -67,7 +68,6 @@ app.get("/api/electrics/count/sumhr", function (req, res, next) {
   );
 });
 
-
 app.get("/api/electrics/:id", function (req, res, next) {
   const id = req.params.id;
   connection.query(
@@ -78,9 +78,11 @@ app.get("/api/electrics/:id", function (req, res, next) {
         if (results.affectedRows == 0) {
           return res.status(404).json({ message: "Error to Get users id !!!" });
         }
-        return res
-          .status(200)
-          .json({ message: `GET users id ${id} successfully.`, status: "ok", user: results[0]});
+        return res.status(200).json({
+          message: `GET users id ${id} successfully.`,
+          status: "ok",
+          user: results[0],
+        });
       }
       //res.json(results);
     }
@@ -98,7 +100,7 @@ app.post("/api/electrics/create", function (req, res, next) {
       req.body.enddate,
       req.body.detail,
       req.body.users,
-      req.body.downtime
+      req.body.downtime,
     ],
     function (err, results) {
       if (!err) {
@@ -119,15 +121,15 @@ app.put("/api/electrics/update", function (req, res, next) {
   connection.query(
     "UPDATE `electric` SET `station`=?, `typestaion`=?, `facility`=?, `startdate`=?, `enddate`=?, `detail`=?, `users`=?, `downtime`=? WHERE id = ?",
     [
-        req.body.station,
-        req.body.typestaion,
-        req.body.facility,
-        req.body.startdate,
-        req.body.enddate,
-        req.body.detail,
-        req.body.users,
-        req.body.downtime,
-        req.body.id,
+      req.body.station,
+      req.body.typestaion,
+      req.body.facility,
+      req.body.startdate,
+      req.body.enddate,
+      req.body.detail,
+      req.body.users,
+      req.body.downtime,
+      req.body.id,
     ],
     function (err, results) {
       if (!err) {
@@ -162,7 +164,7 @@ app.delete("/api/electrics/delete", function (req, res, next) {
   );
 });
 
-//Link NT 
+//Link NT
 
 app.get("/api/nt", function (req, res, next) {
   connection.query(
@@ -218,9 +220,11 @@ app.get("/api/nt/:id", function (req, res, next) {
         if (results.affectedRows == 0) {
           return res.status(404).json({ message: "Error to Get users id !!!" });
         }
-        return res
-          .status(200)
-          .json({ message: `GET users id ${id} successfully.`, status: "ok", user: results[0]});
+        return res.status(200).json({
+          message: `GET users id ${id} successfully.`,
+          status: "ok",
+          user: results[0],
+        });
       }
       //res.json(results);
     }
@@ -238,7 +242,7 @@ app.post("/api/nt/create", function (req, res, next) {
       req.body.enddate,
       req.body.detail,
       req.body.users,
-      req.body.downtime
+      req.body.downtime,
     ],
     function (err, results) {
       if (!err) {
@@ -259,15 +263,15 @@ app.put("/api/nt/update", function (req, res, next) {
   connection.query(
     "UPDATE `nt_down` SET `station`=?, `typestaion`=?, `facility`=?, `startdate`=?, `enddate`=?, `detail`=?, `users`=?, `downtime`=? WHERE id = ?",
     [
-        req.body.station,
-        req.body.typestaion,
-        req.body.facility,
-        req.body.startdate,
-        req.body.enddate,
-        req.body.detail,
-        req.body.users,
-        req.body.downtime,
-        req.body.id,
+      req.body.station,
+      req.body.typestaion,
+      req.body.facility,
+      req.body.startdate,
+      req.body.enddate,
+      req.body.detail,
+      req.body.users,
+      req.body.downtime,
+      req.body.id,
     ],
     function (err, results) {
       if (!err) {
@@ -302,14 +306,13 @@ app.delete("/api/nt/delete", function (req, res, next) {
   );
 });
 
-
 //Query by date range for electrics filter Datetime function
 app.get("/api/electrics/:start/:end", function (req, res, next) {
   const start = req.params.start;
   const end = req.params.end;
   connection.query(
     "SELECT * FROM `electric` WHERE `enddate` BETWEEN ? AND ?",
-    [start,end],
+    [start, end],
     function (err, results, fields) {
       res.json(results);
       console.log(results); // results contains rows returned by server
@@ -324,7 +327,7 @@ app.get("/api/nt/:start/:end", function (req, res, next) {
   const end = req.params.end;
   connection.query(
     "SELECT * FROM `nt_down` WHERE `enddate` BETWEEN ? AND ?",
-    [start,end],
+    [start, end],
     function (err, results, fields) {
       res.json(results);
       console.log(results); // results contains rows returned by server
@@ -333,7 +336,33 @@ app.get("/api/nt/:start/:end", function (req, res, next) {
   );
 });
 
+//Query fo select station and typestation and facility
+
+app.get("/selectors/:station", function (req, res, next) {
+  const station = req.params.station;
+  connection.query(
+    "SELECT DISTINCT `facility`, `typestaion` FROM `electric` WHERE `station` = ?;",
+    [station],
+    // check rows of query result is empty or not
+    function (err, results) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Database query failed" });
+      }
+
+      console.log(results); // results contains rows returned by server
+      console.log(results.length); // results contains rows returned by server
+      return res.status(200).json({
+        message: `GET users id ${station} successfully.`,
+        status: "ok",
+        data: results,
+      });
+
+    
+    }
+  );
+});
 
 app.listen(4000, () => {
- console.log(`Example app listening on port 4000`);
+  console.log(`Example app listening on port 4000`);
 });
