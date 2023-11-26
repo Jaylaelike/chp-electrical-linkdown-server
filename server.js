@@ -26,7 +26,7 @@ app.use(express.json());
 
 app.get("/api/electrics", function (req, res, next) {
   connection.query(
-    "SELECT `id`, `station`, `typestaion`, `facility`, `startdate`, `enddate`, `duration`, `detail`, `users`, `downtime` FROM `electric` WHERE 1 ORDER BY id DESC LIMIT 50;",
+    "SELECT `id`, `station`, `typestaion`, `facility`, `startdate`, `enddate`, `duration`, `detail`, `users`, `downtime` FROM `electric` WHERE 1 ORDER BY id DESC;",
     function (err, results, fields) {
       res.json(results);
       console.log(results); // results contains rows returned by server
