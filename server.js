@@ -13,8 +13,8 @@ const connection = mysql.createConnection({
   password: PASSWORD_SQL,
   database: DATABASE_SQL,
   port: PORT,
-  // timezone: "utc",
-  // dateStrings: "true",
+  timezone: "utc",
+  dateStrings: "true",
   ssl: {
     rejectUnauthorized: true,
   }
