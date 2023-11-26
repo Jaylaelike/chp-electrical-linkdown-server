@@ -363,6 +363,32 @@ app.get("/selectors/:station", function (req, res, next) {
   );
 });
 
+
+app.get("nt/selectors/:station", function (req, res, next) {
+  const station = req.params.station;
+  connection.query(
+    "SELECT DISTINCT `facility`, `typestaion` FROM `nt_down` WHERE `station` = ?;",
+    [station],
+    // check rows of query result is empty or not
+    function (err, results) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Database query failed" });
+      }
+
+      console.log(results); // results contains rows returned by server
+      console.log(results.length); // results contains rows returned by server
+      return res.status(200).json({
+        message: `GET users id ${station} successfully.`,
+        status: "ok",
+        data: results,
+      });
+
+    
+    }
+  );
+});
+
 app.listen(4000, () => {
   console.log(`Example app listening on port 4000`);
 });
