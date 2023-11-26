@@ -364,7 +364,7 @@ app.get("/selectors/:station", function (req, res, next) {
 });
 
 
-app.get("nt/selectors/:station", function (req, res, next) {
+app.get("/nt/selectors/:station", function (req, res, next) {
   const station = req.params.station;
   connection.query(
     "SELECT DISTINCT `facility`, `typestaion` FROM `nt_down` WHERE `station` = ?;",
