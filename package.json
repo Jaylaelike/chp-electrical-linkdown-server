@@ -1,11 +1,10 @@
 {
   "name": "electricform",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "webpack --mode production",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
