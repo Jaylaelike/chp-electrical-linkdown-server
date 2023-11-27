@@ -4,6 +4,7 @@ const mysql = require("mysql2");
 const moment = require("moment");
 require("dotenv").config();
 
+
 const { HOST_SQL, USER_SQL, PASSWORD_SQL, DATABASE_SQL, PORT } = process.env;
 
 ///Connection Config jj
@@ -15,14 +16,16 @@ const connection = mysql.createConnection({
   port: PORT,
   timezone: "utc",
   dateStrings: "true",
-  ssl: {
-    rejectUnauthorized: true,
-  }
+  // ssl: {
+  //   rejectUnauthorized: true,
+  // }
 });
 
 var app = express();
 app.use(cors());
 app.use(express.json());
+
+
 
 app.get("/api/electrics", function (req, res, next) {
   connection.query(
@@ -357,12 +360,9 @@ app.get("/selectors/:station", function (req, res, next) {
         status: "ok",
         data: results,
       });
-
-    
     }
   );
 });
-
 
 app.get("/nt/selectors/:station", function (req, res, next) {
   const station = req.params.station;
@@ -383,8 +383,60 @@ app.get("/nt/selectors/:station", function (req, res, next) {
         status: "ok",
         data: results,
       });
+    }
+  );
+});
 
-    
+//update state of linenotify have time_update and state is bool
+app.put("/api/update/notify", function (req, res, next) {
+  //new Datetime to update time_update
+
+  const time_update = moment().format("YYYY-MM-DD HH:mm:ss");
+  console.log(time_update);
+  connection.query(
+    "UPDATE `state_linenotify` SET `times_update`=?, `state`=? WHERE id = 1",
+    [time_update, req.body.state],
+    function (err, results) {
+      if (!err) {
+        if (results.affectedRows == 0) {
+          return res.status(404).json({ message: "Error to update users !!!" });
+        }
+        return res
+          .status(200)
+          .json({ message: "Updated data successfully.", status: "ok", state: req.body.state });
+      }
+      // res.json(results);
+    }
+  );
+});
+
+//get state of linenotify have time_update and state is bool
+app.get("/api/get/notify", function (req, res, next) {
+  connection.query(
+    "SELECT * FROM `state_linenotify` WHERE 1",
+    function (err, results) {
+      if (!err) {
+        if (results.affectedRows == 0) {
+          return res.status(404).json({ message: "Error to update users !!!" });
+        }
+
+        // if state === 0 resluts is false and state === 1 resluts is true
+        if (results[0].state === 0) {
+          return res.status(200).json({
+            message: "GET data successfully.",
+            status: "ok",
+            time: results[0].times_update,
+            state: false,
+          });
+        } else {
+          return res.status(200).json({
+            message: "GET data successfully.",
+            status: "ok",
+            time: results[0].times_update,
+            state: true,
+          });
+        }
+      }
     }
   );
 });
